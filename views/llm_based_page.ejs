@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LLM-Based Event Page | Sohojia Foundation</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #f5fbff, #ffffff);
+      color: #333;
+      padding: 30px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      background: linear-gradient(to right, #0077cc, #00c6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      background: #eaf6ff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+    }
+
+    .top-bar label {
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #66afe9;
+      background-color: #f0faff;
+    }
+
+    button {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin: 10px auto;
+      display: block;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    .generated-heading,
+    .generated-summary {
+      background-color: #ffffff;
+      border-left: 6px solid #0077cc;
+      padding: 18px;
+      margin: 25px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      font-size: 1.1rem;
+    }
+
+    .section {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      background: #ffffff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+      transition: transform 0.2s ease;
+    }
+
+    .section:hover {
+      transform: scale(1.01);
+    }
+
+    .section img {
+      width: 300px;
+      height: auto;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      display: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: 0.3s ease-in-out;
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .add-section-btn,
+    .generate-btn {
+      margin: 25px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Sohojia Foundation</h1>
+  </header>
+
+  <div class="top-bar">
+    <div style="width: 45%;">
+      <label>📍 Location</label>
+      <input type="text" id="location">
+      <label>📅 Date</label>
+      <input type="date" id="date">
+    </div>
+    <div style="width: 45%;">
+      <label>🎉 Event Name</label>
+      <input type="text" id="eventName">
+    </div>
+  </div>
+
+  <button onclick="generateHeading()">🧠 Generate Heading with AI</button>
+  <div class="generated-heading" id="headingBox">🤖 LLM heading will appear here</div>
+
+  <div id="sections"></div>
+
+  <button class="add-section-btn" onclick="addSection()">➕ Add Photo & Info</button>
+  <button class="generate-btn" onclick="generateSummary()">📝 Generate Summary</button>
+
+  <footer>
+    <div class="generated-summary" id="summaryBox">📦 LLM-generated summary will appear here</div>
+    <p>© Sohojia Foundation | LLM-powered Event Reporting</p>
+  </footer>
+
+  <script>
+    function addSection() {
+      const section = document.createElement("div");
+      section.className = "section";
+      const uniqueId = `preview-${Date.now()}`;
+
+      section.innerHTML = `
+        <div>
+          <label>🖼️ Photo:
+            <input type="file" accept="image/*" onchange="previewImage(event, '${uniqueId}')">
+            <br>
+            <img id="${uniqueId}" src="" alt="Preview">
+          </label>
+        </div>
+        <div style="flex-grow: 1;">
+          <label>📌 Topic</label>
+          <input type="text" class="topic">
+          <label>👤 Student Name</label>
+          <input type="text" class="student">
+          <label>🏫 School Name</label>
+          <input type="text" class="school">
+          <label>📝 Description</label>
+          <textarea class="desc" rows="3"></textarea>
+        </div>
+      `;
+      document.getElementById("sections").appendChild(section);
+    }
+
+    function previewImage(event, previewId) {
+      const file = event.target.files[0];
+      const preview = document.getElementById(previewId);
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function generateHeading() {
+      const location = document.getElementById('location').value;
+      const date = document.getElementById('date').value;
+      const event = document.getElementById('eventName').value;
+
+      const prompt = `Generate a creative heading for an event report. Location: ${location}, Date: ${date}, Event: ${event}`;
+
+      const res = await fetch('/generate-heading', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await res.json();
+      document.getElementById('headingBox').innerText = data.heading || "⚠️ Failed to generate heading.";
+    }
+
+    async function generateSummary() {
+      const sections = document.querySelectorAll(".section");
+      let summaryPrompt = "Create a detailed summary based on the following event inputs:\n";
+
+      sections.forEach((sec, index) => {
+        const topic = sec.querySelector(".topic").value;
+        const student = sec.querySelector(".student").value;
+        const school = sec.querySelector(".school").value;
+        const desc = sec.querySelector(".desc").value;
+        summaryPrompt += `Section ${index + 1}: Topic: ${topic}, Student: ${student}, School: ${school}, Description: ${desc}\n`;
+      });
+
+      const res = await fetch('/generate-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: summaryPrompt })
+      });
+
+      const data = await res.json();
+      document.getElementById('summaryBox').innerText = data.summary || "⚠️ Failed to generate summary.";
+    }
+  </script>
+</body>
+</html>
