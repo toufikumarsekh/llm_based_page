@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const path = require('path');
 const { generateLLMResponse } = require('./llm'); // Import your LLM function
@@ -8,20 +7,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(express.json()); // to parse JSON requests
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public')); // for serving /style.css or images
+app.use(express.static('public'));
 
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve your main page
+// Serve main page
 app.get('/', (req, res) => {
-  res.render('llm_based_page'); // llm_based_page.ejs should be in /views
+  res.render('llm_based_page');
 });
 
-// Route 1: Handle heading generation
+// Route 1: Generate heading
 app.post('/generate-heading', async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -33,7 +32,7 @@ app.post('/generate-heading', async (req, res) => {
   }
 });
 
-// Route 2: Handle summary generation
+// Route 2: Generate summary
 app.post('/generate-summary', async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -42,6 +41,18 @@ app.post('/generate-summary', async (req, res) => {
   } catch (err) {
     console.error('❌ Error generating summary:', err.message);
     res.status(500).json({ summary: null });
+  }
+});
+
+// Route 3: Generate photo caption
+app.post('/generate-caption', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const caption = await generateLLMResponse(prompt);
+    res.json({ caption });
+  } catch (err) {
+    console.error('❌ Error generating caption:', err.message);
+    res.status(500).json({ caption: null });
   }
 });
 

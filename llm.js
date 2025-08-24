@@ -1,3 +1,4 @@
+// llm.js
 require('dotenv').config();
 const OpenAI = require('openai');
 
@@ -7,7 +8,7 @@ const openai = new OpenAI({
 });
 
 /**
- * Generate a response using OpenRouter-compatible model
+ * Generate a response using GPT-4.1 Mini (text-only, multilingual)
  * @param {string} prompt - The user prompt
  * @returns {Promise<string>} - AI-generated response
  */
@@ -16,10 +17,9 @@ async function generateLLMResponse(prompt) {
         console.log('📤 Prompt sent to LLM:', prompt);
 
         const response = await openai.chat.completions.create({
-            model: 'mistralai/mistral-7b-instruct', // ✅ valid and works well
+            model: 'GPT-3.5-turbo', // ✅ Faster, free, multilingual
             messages: [{ role: 'user', content: prompt }],
         });
-
 
         console.log('✅ LLM response:', JSON.stringify(response, null, 2));
 
@@ -29,4 +29,6 @@ async function generateLLMResponse(prompt) {
         throw err;
     }
 }
+
+// ✅ Export for app.js
 module.exports = { generateLLMResponse };

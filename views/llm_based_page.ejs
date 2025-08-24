@@ -1,314 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>LLM-Based Event Page | Sohojia Foundation</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    html, body {
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background: #f3f3f3;
-      color: #333;
-      padding: 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    header {
-      background: rgb(243, 79, 76);
-      padding: 16px;
-      text-align: center;
-      border-radius: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      margin-bottom: 25px;
-    }
-
-    header h1 {
-      color: #fff;
-      font-size: 24px;
-      text-transform: uppercase;
-      font-weight: bold;
-      margin: 0;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .top-bar > div {
-      flex: 1;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      color: rgb(243, 79, 76);
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: #fff;
-      font-size: 14px;
-      margin-bottom: 14px;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-      transition: border-color 0.3s ease;
-    }
-
-    input:focus,
-    textarea:focus {
-      outline: none;
-      border-color: rgb(243, 79, 76);
-      box-shadow: 0 0 6px rgb(243, 79, 76, 0.3);
-      background: #fff;
-    }
-
-    button {
-      width: 100%;
-      max-width: 320px;
-      margin: 16px auto;
-      padding: 14px;
-      background: rgb(243, 79, 76);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      transition: background 0.3s ease;
-      display: block;
-      text-align: center;
-    }
-
-    button:hover {
-      background: rgb(220, 65, 62);
-    }
-
-    .generated-summary {
-      background: #fff;
-      border-left: 6px solid rgb(243, 79, 76);
-      padding: 20px;
-      margin: 24px 0;
-      border-radius: 8px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-      font-size: 16px;
-      color: #333;
-    }
-
-    .section {
-      display: flex;
-      gap: 20px;
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-      transition: box-shadow 0.3s ease, transform 0.2s ease;
-    }
-
-    .section:hover {
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      transform: translateY(-2px);
-    }
-
-    .section img {
-      width: 280px;
-      height: auto;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      display: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      object-fit: cover;
-      transition: opacity 0.3s ease;
-    }
-
-    .caption-box {
-      margin-top: 8px;
-      font-size: 13px;
-      color: #555;
-      font-style: italic;
-    }
-
-    .generate-caption-btn {
-      margin-top: 12px;
-      padding: 10px 18px;
-      background-color: rgb(243, 79, 76);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
-      transition: background 0.3s ease;
-    }
-
-    .generate-caption-btn:hover {
-      background-color: rgb(220, 65, 62);
-    }
-
-    /* New style for heading */
-    #headingBox {
-      color: rgb(243, 79, 76);
-      font-weight: 700;
-      font-size: 24px;
-      margin: 24px 0;
-      text-align: center;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 13px;
-      color: #777;
-      padding: 16px 0;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>LLM-Based Event Page | Sohojia Foundation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; font-family: Arial, sans-serif; background: #f3f3f3; color: #333; padding: 20px; max-width: 1100px; margin: auto; }
+  header { background: rgb(243, 79, 76); padding: 16px; text-align: center; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 25px; }
+  header h1 { color: #fff; font-size: 24px; text-transform: uppercase; font-weight: bold; margin: 0; }
+  .top-bar { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 24px; align-items: flex-end; }
+  .top-bar > div { flex: 1; }
+  label { display: block; font-weight: bold; color: rgb(243, 79, 76); margin-bottom: 6px; font-size: 14px; }
+  input[type="text"], input[type="date"], textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; background: #fff; font-size: 14px; margin-bottom: 14px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); transition: border-color 0.3s ease; }
+  input:focus, textarea:focus { outline: none; border-color: rgb(243, 79, 76); box-shadow: 0 0 6px rgb(243, 79, 76, 0.3); background: #fff; }
+  button { width: 100%; max-width: 320px; margin: 16px auto; padding: 14px; background: rgb(243, 79, 76); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: background 0.3s ease; display: block; text-align: center; }
+  button:hover { background: rgb(220, 65, 62); }
+  .generated-summary { background: #fff; border-left: 6px solid rgb(243, 79, 76); padding: 20px; margin: 24px 0; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); font-size: 16px; color: #333; white-space: pre-line; }
+  .section { display: flex; gap: 20px; background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); position: relative; transition: box-shadow 0.3s ease, transform 0.2s ease; }
+  .section:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.15); transform: translateY(-2px); }
+  .section img { width: 280px; height: auto; border-radius: 8px; border: 1px solid #ddd; display: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1); object-fit: cover; transition: opacity 0.3s ease; }
+  .caption-box { margin-top: 8px; font-size: 13px; color: #555; font-style: italic; white-space: pre-line; }
+  .generate-caption-btn, .remove-section-btn { margin-top: 12px; padding: 10px 18px; background-color: rgb(243, 79, 76); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; box-shadow: 0 3px 8px rgba(0,0,0,0.12); transition: background 0.3s ease; }
+  .generate-caption-btn:hover, .remove-section-btn:hover { background-color: rgb(220, 65, 62); }
+  #headingBox { color: rgb(243, 79, 76); font-weight: 700; font-size: 24px; margin: 24px 0; text-align: center; white-space: pre-line; }
+  footer { text-align: center; font-size: 13px; color: #777; padding: 16px 0; }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>Sohojia Foundation</h1>
-  </header>
+<header>
+  <h1>Sohojia Foundation</h1>
+</header>
 
-  <div class="top-bar">
-    <div>
-      <label>📍 Location</label>
-      <input type="text" id="location">
-      <label>📅 Date</label>
-      <input type="date" id="date">
-    </div>
-    <div>
-      <label>🎉 Event Name</label>
-      <input type="text" id="eventName">
-    </div>
+<div class="top-bar">
+  <div>
+    <label>📍 Location</label>
+    <input type="text" id="location">
+    <label>📅 Date</label>
+    <input type="date" id="date">
   </div>
+  <div>
+    <label>🎉 Event Name</label>
+    <input type="text" id="eventName">
+  </div>
+</div>
 
-  <button onclick="generateHeading()">🧠 Generate Heading with AI</button>
+<button onclick="generateHeading()">🧠 Generate Heading with AI</button>
 
-  <!-- Changed div to h2 here -->
-  <h2 id="headingBox">🤖 LLM heading will appear here</h2>
+<h2 id="headingBox">🤖 LLM heading will appear here</h2>
 
-  <div id="sections"></div>
+<div id="sections"></div>
 
-  <button class="add-section-btn" onclick="addSection()">➕ Add Photo & Info</button>
-  <button class="generate-btn" onclick="generateSummary()">📝 Generate Summary</button>
+<button class="add-section-btn" onclick="addSection()">➕ Add Photo & Info</button>
+<button class="generate-btn" onclick="generateSummary()">📝 Generate Summary</button>
 
-  <footer>
-    <div class="generated-summary" id="summaryBox">📦 LLM-generated summary will appear here</div>
-    <p>© Sohojia Foundation | LLM-powered Event Reporting</p>
-  </footer>
+<footer>
+  <div class="generated-summary" id="summaryBox">📦 LLM-generated summary will appear here</div>
+  <p>© Sohojia Foundation | LLM-powered Event Reporting</p>
+</footer>
 
 <script>
-  function addSection() {
-      const section = document.createElement("div");
-      section.className = "section";
-      const uniqueId = `preview-${Date.now()}`;
-      const captionId = `caption-${Date.now()}`;
+function addSection() {
+    const section = document.createElement("div");
+    section.className = "section";
+    const uniqueId = `preview-${Date.now()}`;
+    const captionId = `caption-${Date.now()}`;
 
-      section.innerHTML = `
-        <div>
-          <label>🖼️ Photo:
-            <input type="file" accept="image/*" onchange="previewImage(event, '${uniqueId}')">
-          </label>
-          <br>
-          <img id="${uniqueId}" src="" alt="Preview">
-          <button type="button" class="generate-caption-btn" onclick="generateCaption('${captionId}')">✨ Generate Caption</button>
-          <div id="${captionId}" class="caption-box">📷 LLM caption will appear here</div>
-        </div>
-        <div style="flex-grow: 1;">
-          <label>📌 Topic</label>
-          <input type="text" class="topic">
-          <label>👤 Student Name</label>
-          <input type="text" class="student">
-          <label>🏫 School Name</label>
-          <input type="text" class="school">
-          <label>📝 Description</label>
-          <textarea class="desc" rows="3"></textarea>
-        </div>
-      `;
-      document.getElementById("sections").appendChild(section);
-    }
+    section.innerHTML = `
+      <div>
+        <label>🖼️ Photo:
+          <input type="file" accept="image/*" onchange="previewImage(event, '${uniqueId}')">
+        </label>
+        <br>
+        <img id="${uniqueId}" src="" alt="Preview">
+        <button type="button" class="generate-caption-btn" onclick="generateCaption('${captionId}')">✨ Generate Caption</button>
+        <div id="${captionId}" class="caption-box">📷 LLM caption will appear here</div>
+      </div>
+      <div style="flex-grow: 1;">
+        <label>📌 Topic</label>
+        <input type="text" class="topic">
+        <label>📝 Description</label>
+        <textarea class="desc" rows="3"></textarea>
+      </div>
+      <div style="position: absolute; top: 10px; right: 10px;">
+        <button type="button" class="remove-section-btn" onclick="removeSection(this)">🗑️ Remove</button>
+      </div>
+    `;
+    document.getElementById("sections").appendChild(section);
+}
 
-    function previewImage(event, previewId) {
-      const file = event.target.files[0];
-      const preview = document.getElementById(previewId);
+function removeSection(button) {
+    const section = button.closest(".section");
+    if(section) section.remove();
+}
 
-      if (file) {
+function previewImage(event, previewId) {
+    const file = event.target.files[0];
+    const preview = document.getElementById(previewId);
+    if(file) {
         const reader = new FileReader();
-        reader.onload = function (e) {
-          preview.src = e.target.result;
-          preview.style.display = 'block';
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
         };
         reader.readAsDataURL(file);
-      }
     }
+}
 
-    async function generateCaption(captionId) {
-      const prompt = "Generate a short, engaging caption for this event photo.";
-      const res = await fetch('/generate-caption', {
+// --- LLM-based language detection ---
+async function detectLanguage(text) {
+    const prompt = `
+Detect the language of the following text and reply with exactly one word: English, Bengali, or Hindi.
+Text: "${text}"
+`;
+    const res = await fetch('/generate-heading', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
-      });
-      const data = await res.json();
-      document.getElementById(captionId).innerText = data.caption || "⚠️ Failed to generate caption.";
-    }
+    });
+    const data = await res.json();
+    let lang = data.heading || 'English';
+    lang = lang.trim().split('\n')[0];
+    return lang;
+}
 
-    async function generateHeading() {
-      const location = document.getElementById('location').value;
-      const date = document.getElementById('date').value;
-      const event = document.getElementById('eventName').value;
+// --- Generate heading ---
+async function generateHeading() {
+    const location = document.getElementById('location').value;
+    const date = document.getElementById('date').value;
+    const event = document.getElementById('eventName').value;
 
-      const prompt = `Generate a creative heading for an event report. Location: ${location}, Date: ${date}, Event: ${event}`;
-
-      const res = await fetch('/generate-heading', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
-      const data = await res.json();
-      document.getElementById('headingBox').innerText = data.heading || "⚠️ Failed to generate heading.";
-    }
-
-    async function generateSummary() {
-      const sections = document.querySelectorAll(".section");
-      let summaryPrompt = "Create a detailed summary based on the following event inputs:\n";
-
-      sections.forEach((sec, index) => {
+    const sections = document.querySelectorAll(".section");
+    let topicsText = '';
+    sections.forEach((sec, index) => {
         const topic = sec.querySelector(".topic").value;
-        const student = sec.querySelector(".student").value;
-        const school = sec.querySelector(".school").value;
+        if(topic) topicsText += `Topic ${index+1}: ${topic}\n`;
+    });
+
+    const detectedLang = await detectLanguage(location + event + topicsText);
+
+    const prompt = `
+Generate a short, official, and compact heading for an event report.
+Language: ${detectedLang}
+Location: ${location}
+Date: ${date}
+Event: ${event}
+${topicsText}
+Output should be concise and professional.
+`;
+
+    const res = await fetch('/generate-heading', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+    });
+
+    const data = await res.json();
+    document.getElementById('headingBox').innerText = data.heading || "⚠️ Failed to generate heading.";
+}
+
+// --- Generate photo caption ---
+async function generateCaption(captionId) {
+    const section = document.getElementById(captionId).closest(".section");
+    const topic = section.querySelector(".topic").value;
+    const desc = section.querySelector(".desc").value;
+
+    const detectedLang = await detectLanguage(topic + desc);
+
+    const prompt = `
+Generate a short photo caption fully connected to the description.
+Language: ${detectedLang}
+Description: ${desc}
+Topic: ${topic}
+Caption must be maximum 5 words.
+`;
+
+    const res = await fetch('/generate-caption', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+    });
+
+    const data = await res.json();
+    document.getElementById(captionId).innerText = data.caption || "⚠️ Failed to generate caption.";
+}
+
+// --- Generate summary ---
+async function generateSummary() {
+    const location = document.getElementById('location').value;
+    const date = document.getElementById('date').value;
+    const event = document.getElementById('eventName').value;
+    const sections = document.querySelectorAll(".section");
+
+    let allText = location + event;
+    let summaryPrompt = `
+Create a coherent event summary based on all inputs.
+Location: ${location}
+Date: ${date}
+Event: ${event}
+`;
+
+    sections.forEach((sec, index) => {
+        const topic = sec.querySelector(".topic").value;
         const desc = sec.querySelector(".desc").value;
         const caption = sec.querySelector(".caption-box").innerText;
-        summaryPrompt += `Section ${index + 1}: Caption: ${caption}, Topic: ${topic}, Student: ${student}, School: ${school}, Description: ${desc}\n`;
-      });
+        allText += topic + desc + caption;
+        summaryPrompt += `Section ${index+1}: Topic: ${topic}, Description: ${desc}, Caption: ${caption}\n`;
+    });
 
-      const res = await fetch('/generate-summary', {
+    const detectedLang = await detectLanguage(allText);
+
+    summaryPrompt += `Language: ${detectedLang}
+The summary must be fully linked with all above info and maximum 4 lines.`;
+
+    const res = await fetch('/generate-summary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: summaryPrompt })
-      });
+    });
 
-      const data = await res.json();
-      document.getElementById('summaryBox').innerText = data.summary || "⚠️ Failed to generate summary.";
-    }
+    const data = await res.json();
+    document.getElementById('summaryBox').innerText = data.summary || "⚠️ Failed to generate summary.";
+}
 </script>
 </body>
 </html>
