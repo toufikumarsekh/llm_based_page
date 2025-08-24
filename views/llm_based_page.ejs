@@ -25,8 +25,13 @@
   #headingBox { color: rgb(243, 79, 76); font-weight: 700; font-size: 24px; margin: 24px 0; text-align: center; white-space: pre-line; }
   footer { text-align: center; font-size: 13px; color: #777; padding: 16px 0; }
 </style>
+
+<!-- html2pdf library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
+
+<div id="pdfContent"> <!-- PDF container starts -->
 
 <header>
   <h1>Sohojia Foundation</h1>
@@ -53,6 +58,10 @@
 
 <button class="add-section-btn" onclick="addSection()">➕ Add Photo & Info</button>
 <button class="generate-btn" onclick="generateSummary()">📝 Generate Summary</button>
+
+</div> <!-- PDF container ends -->
+
+<button class="generate-btn" onclick="generatePDF()">📄 Generate PDF & View</button>
 
 <footer>
   <div class="generated-summary" id="summaryBox">📦 LLM-generated summary will appear here</div>
@@ -89,10 +98,7 @@ function addSection() {
     document.getElementById("sections").appendChild(section);
 }
 
-function removeSection(button) {
-    const section = button.closest(".section");
-    if(section) section.remove();
-}
+function removeSection(button) { const section = button.closest(".section"); if(section) section.remove(); }
 
 function previewImage(event, previewId) {
     const file = event.target.files[0];
@@ -106,6 +112,8 @@ function previewImage(event, previewId) {
         reader.readAsDataURL(file);
     }
 }
+
+// --- LLM-based functions omitted for brevity, keep your existing generateHeading(), generateCaption(), generateSummary() here ---
 
 // --- LLM-based language detection ---
 async function detectLanguage(text) {
@@ -221,6 +229,27 @@ The summary must be fully linked with all above info and maximum 4 lines.`;
 
     const data = await res.json();
     document.getElementById('summaryBox').innerText = data.summary || "⚠️ Failed to generate summary.";
+}
+// --- Generate PDF ---
+function generatePDF() {
+    const element = document.getElementById('pdfContent');
+    const clonedElement = element.cloneNode(true);
+
+    // Remove buttons from PDF
+    clonedElement.querySelectorAll('button').forEach(btn => btn.remove());
+
+    const opt = {
+        margin:       0.5,
+        filename:     'Event_Report.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(clonedElement).set(opt).outputPdf('blob').then(function(pdfBlob) {
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        window.open(pdfUrl, '_blank'); // open PDF in a new tab
+    });
 }
 </script>
 </body>
